@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
-import { Book } from "./books.model";
 
 const borrowSchema = new Schema<IBorrow>({
     book: {
@@ -11,7 +10,7 @@ const borrowSchema = new Schema<IBorrow>({
     quantity: {
         type: Number,
         required: true,
-        min: 1
+        min: [1, 'Quantity must be at least 1, got {VALUE}']
     },
     dueDate: {
         type: Date,

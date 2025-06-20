@@ -12,7 +12,11 @@ const BookSchema = new Schema<IBooks>({
     },
     genre: {
         type: String,
-        enum: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],
+        uppercase: true,
+        enum: {
+            values : ['FICTION', 'NON_FICTION', 'SCIENCE', 'HISTORY', 'BIOGRAPHY', 'FANTASY'],
+            message: '{VALUE} is not supported'
+        },
         required: true
     },
     isbn: {
@@ -26,7 +30,7 @@ const BookSchema = new Schema<IBooks>({
     },
     copies: {
         type: Number,
-        min: 0,
+        min: [0, 'Must be at least 0, got {VALUE}'],
         required: true
     },
     available: {
