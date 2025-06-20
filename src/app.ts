@@ -41,7 +41,7 @@ const BookSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    updatedAt:{
+    updatedAt: {
         type: Date,
         default: Date.now
     }
@@ -54,16 +54,40 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to library management app!')
 })
 
+// create book
 app.post('/api/books', async (req: Request, res: Response) => {
     const body = req.body;
     const book = await Book.create(body);
 
     res.status(201).json({
-        "success": true,
-        "message": "Book created successfully",
-        "data": book
+        success: true,
+        message: "Book created successfully",
+        data: book
     })
 
+})
+
+// get all books
+app.get('/api/books', async (req: Request, res: Response) => {
+    const books = await Book.find({});
+
+    res.status(200).json({
+        success: true,
+        message: "Books retrieved successfully",
+        data: books
+    })
+})
+
+// get a single book by id
+app.get('/api/books/:bookId', async (req: Request, res: Response) => {
+    const id = req.params.bookId;
+    const book = await Book.findById(id);
+
+    res.status(200).json({
+        success: true,
+        message: "Book retrieved successfully",
+        data: book
+    })
 })
 
 export default app;
