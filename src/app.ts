@@ -91,15 +91,27 @@ app.get('/api/books/:bookId', async (req: Request, res: Response) => {
 })
 
 // update a book by id
-app.patch('/api/books/:bookId', async (req: Request, res: Response) => {
+app.put('/api/books/:bookId', async (req: Request, res: Response) => {
     const id = req.params.bookId;
     const updatedBody = req.body;
     const book = await Book.findByIdAndUpdate(id, updatedBody, { new: true });
 
-    res.status(200).json({
+    res.status(201).json({
         success: true,
         message: "Book updated successfully",
         data: book
+    })
+})
+
+// delete a book by id
+app.delete('/api/books/:bookId', async (req: Request, res: Response) => {
+    const id = req.params.bookId;
+    const book = await Book.findByIdAndDelete(id);
+
+    res.status(200).json({
+        success: true,
+        message: "Book deleted successfully",
+        data: null
     })
 })
 
