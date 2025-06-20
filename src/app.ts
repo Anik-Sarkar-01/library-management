@@ -78,7 +78,7 @@ app.get('/api/books', async (req: Request, res: Response) => {
     })
 })
 
-// get a single book by id
+// get a book by id
 app.get('/api/books/:bookId', async (req: Request, res: Response) => {
     const id = req.params.bookId;
     const book = await Book.findById(id);
@@ -89,5 +89,19 @@ app.get('/api/books/:bookId', async (req: Request, res: Response) => {
         data: book
     })
 })
+
+// update a book by id
+app.patch('/api/books/:bookId', async (req: Request, res: Response) => {
+    const id = req.params.bookId;
+    const updatedBody = req.body;
+    const book = await Book.findByIdAndUpdate(id, updatedBody, { new: true });
+
+    res.status(200).json({
+        success: true,
+        message: "Book updated successfully",
+        data: book
+    })
+})
+
 
 export default app;
