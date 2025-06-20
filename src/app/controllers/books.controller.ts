@@ -1,19 +1,40 @@
 import express, { Request, Response } from "express";
 import { Book } from "../models/books.model";
+import { z } from "zod";
 
 export const booksRoutes = express.Router();
 
+const createBooksZodSchema = z.object(
+    {
+        title: z.string(),
+        author: z.string(),
+        genre: z.string(),
+        isbn: z.string(),
+        description: z.string().optional(),
+        copies: z.number().int(),
+        available: z.boolean().optional()
+    }
+)
+
 // create book
 booksRoutes.post('/', async (req: Request, res: Response) => {
-    const body = req.body;
-    const book = await Book.create(body);
+    try {
+        const body = await createBooksZodSchema.parseAsync(req.body);
+        const book = await Book.create(body);
 
-    res.status(201).json({
-        success: true,
-        message: "Book created successfully",
-        data: book
-    })
+        res.status(201).json({
+            success: true,
+            message: "Book created successfully",
+            data: book
+        })
 
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message,
+            error
+        })
+    }
 })
 
 // get all books

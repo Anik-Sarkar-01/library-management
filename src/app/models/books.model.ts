@@ -1,5 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IBooks } from "../interfaces/books.interface";
+import validator from 'validator';
+
 
 const BookSchema = new Schema<IBooks>({
     title: {
@@ -19,22 +21,25 @@ const BookSchema = new Schema<IBooks>({
             values: ['FICTION', 'NON_FICTION', 'SCIENCE', 'HISTORY', 'BIOGRAPHY', 'FANTASY'],
             message: '{VALUE} is not supported.'
         },
-        required: [true, 'Genre is required.']
+        required: [true, 'Genre is required.'],
+        trim: true
     },
     isbn: {
         type: String,
         required: [true, "ISBN is required."],
         unique: true,
-        trim:true
+        trim:true,
+        validate: [validator.isISBN, "Invalid ISBN"]
     },
     description: {
         type: String,
-        default: ""
+        default: "",
+        trim: true,
     },
     copies: {
         type: Number,
         min: [0, 'Must be at least 0, got {VALUE}'],
-        required: [true, "COPIES is required."]
+        required: [true, "Total Number of copies is required."]
     },
     available: {
         type: Boolean,
@@ -42,7 +47,7 @@ const BookSchema = new Schema<IBooks>({
     },
 }, {
     versionKey: false,
-    timestamps: true,
+    timestamps: true
 });
 
 export const Book = model<IBooks>('Book', BookSchema);
