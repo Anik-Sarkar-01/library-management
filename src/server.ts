@@ -2,7 +2,7 @@ import { Server } from 'http';
 import app from "./app";
 import mongoose from 'mongoose';
 
-let server : Server;
+let server: Server;
 const PORT = 3000;
 
 async function main() {

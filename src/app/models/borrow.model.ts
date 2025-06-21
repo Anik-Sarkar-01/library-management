@@ -28,11 +28,19 @@ borrowSchema.static("processBorrow", async function (
 ) {
     const book = await Book.findById(bookId);
     if (!book) {
-        throw new Error("Book not found")
+        const err = new Error("Book not found");
+        err.name = "NotFoundError";
+        throw err;
     };
+
     if (book.copies < quantity) {
-        throw new Error("Not enough copies available!!")
+        const err = new Error(
+            `Only ${book.copies} copies available, but ${quantity} requested.`
+        );
+        err.name = "ValidationError";
+        throw err;
     };
+    
     book.copies -= quantity;
     if (book.copies === 0) {
         book.available = false;
@@ -45,7 +53,7 @@ borrowSchema.static("processBorrow", async function (
 borrowSchema.pre("save", async function (next) {
     console.log("Borrow record is about to be validated and saved:", this);
     const exists = await Book.exists({ _id: this.book })
-    if(exists){
+    if (exists) {
         console.log("Book reference validated:", this.book);
     }
     next();
