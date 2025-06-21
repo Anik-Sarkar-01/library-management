@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrow.model";
 import { z } from "zod";
+import { Types } from "mongoose";
+import { Book } from "../models/books.model";
 
 
 export const borrowRoutes = express.Router();
@@ -19,8 +21,11 @@ const CreateBorrowZodSchema = z.object(
 // create Borrow
 borrowRoutes.post('/', async (req: Request, res: Response) => {
     try {
-        const body = await CreateBorrowZodSchema.parseAsync(req.body);
-        const borrow = await Borrow.create(body);
+        const { book, quantity, dueDate } = await CreateBorrowZodSchema.parseAsync(req.body);
+
+        await Borrow.processBorrow(book, quantity);
+
+        const borrow = await Borrow.create({ book, quantity, dueDate });
 
         res.status(201).json({
             success: true,
@@ -31,14 +36,14 @@ borrowRoutes.post('/', async (req: Request, res: Response) => {
         res.status(400).json({
             success: false,
             message: error.message,
-            error
-        })
+            error,
+        });
     }
 })
 
 // get all borrow
 borrowRoutes.get('/', async (req: Request, res: Response) => {
-    const borrow = await Borrow.find({});
+    const borrow = await Borrow.find().populate('book');
 
     res.status(200).json({
         success: true,
