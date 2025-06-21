@@ -1,9 +1,6 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrow.model";
 import { z } from "zod";
-import { Types } from "mongoose";
-import { Book } from "../models/books.model";
-
 
 export const borrowRoutes = express.Router();
 
@@ -34,50 +31,55 @@ borrowRoutes.post('/', async (req: Request, res: Response) => {
         })
     } catch (error: any) {
         res.status(400).json({
+            message: error.message || "Failed to borrow",
             success: false,
-            message: error.message,
-            error,
-        });
+            error: error
+        })
     }
 })
 
 // get all borrow
 borrowRoutes.get('/', async (req: Request, res: Response) => {
+    try {
+        const summary = await Borrow.aggregate([
+            { $group: { _id: "$book", totalQuantity: { $sum: "$quantity" } } },
 
-    // const borrow = await Borrow.find().populate('book');
+            {
+                $lookup: {
+                    from: "books",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "bookDetails"
+                }
+            },
 
-    const summary = await Borrow.aggregate([
-        { $group: { _id: "$book", totalQuantity: { $sum: "$quantity" } } },
+            { $unwind: "$bookDetails" },
 
-        {
-            $lookup: {
-                from: "books", 
-                localField: "_id",
-                foreignField: "_id",
-                as: "bookDetails"
+            {
+                $project: {
+                    _id: 0,
+                    book: {
+                        bookId: "$bookDetails._id",
+                        title: "$bookDetails.title",
+                        isbn: "$bookDetails.isbn",
+                    },
+                    totalQuantity: 1
+                }
             }
-        },
+        ])
 
-        { $unwind: "$bookDetails" },
-
-        {
-            $project: {
-                _id: 0,
-                book: {
-                    bookId: "$bookDetails._id",
-                    title: "$bookDetails.title",
-                    isbn: "$bookDetails.isbn",
-                },
-                totalQuantity: 1
-            }
-        }
-    ])
-
-    res.status(200).json({
-        success: true,
-        message: "Borrowed books summary retrieved successfully",
-        data: summary
-    })
+        res.status(200).json({
+            success: true,
+            message: "Borrowed books summary retrieved successfully",
+            data: summary
+        })
+    } catch (error : any) {
+        res.status(400).json({
+            message: error.message || "Failed to generate summary",
+            success: false,
+            error: error
+        })
+    }
 })
 
 
