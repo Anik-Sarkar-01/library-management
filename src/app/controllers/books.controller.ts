@@ -38,6 +38,8 @@ booksRoutes.post('/', async (req: Request, res: Response) => {
 })
 
 // get all books
+// /app/books
+// /api/books?filter=FANTASY&sortBy=createdAt&sort=desc&limit=5
 booksRoutes.get('/', async (req: Request, res: Response) => {
     try {
         const { filter, sortBy = "createdAt", sort = "asc", limit = "10" } = req.query;
