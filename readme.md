@@ -1,20 +1,20 @@
 
 # 📚 Library Management System
 
-A simple Library Management System built with **TypeScript**, **Express**, **MongoDB**, and **Zod**. This API allows users to manage books, borrow them, and track availability and borrowing statistics.
+A Library Management System developed with **TypeScript**, **Express**, **MongoDB** (via Mongoose).This API allows users to manage books, borrow books, and monitor availability and borrowing statistics.
 
 ---
 
 ## 🚀 Features
 
-- 📘 Add, update, delete, and fetch books
-- 🔎 Filter and sort books by genre, date, etc.
-- 📚 Borrow books with quantity and due date
-- ⚠️ Prevent borrowing if stock is insufficient
-- ✅ Automatically marks books unavailable when stock reaches zero
-- 📊 Aggregated summary of borrowed books with total quantity
-- 🔐 Input validation using Zod
-- ⚙️ Modular structure with Mongoose + TypeScript
+- Add, get, update and delete books.
+- Filter and sort books by genre and date.
+- Borrow books with quantity and due date.
+- Prevent borrowing if stock is insufficient.
+- Automatically marks books unavailable when stock reaches zero.
+- Get summary of borrowed books with total quantity.
+- Input validation using Zod and validator package.
+- MVC architectural pattern.
 
 ---
 
@@ -23,7 +23,7 @@ A simple Library Management System built with **TypeScript**, **Express**, **Mon
 - **Backend**: Node.js, Express.js
 - **Language**: TypeScript
 - **Database**: MongoDB (with Mongoose)
-- **Validation**: Zod
+- **Validation**: Zod, validator.js
 - **Testing Tool**: Postman
 
 ---
@@ -43,16 +43,7 @@ cd library-management
 npm install
 ```
 
-### 3️⃣ Configure Environment Variables
-
-Create a `.env` file in the root:
-
-```
-PORT=3000
-DATABASE_URL=mongodb://localhost:27017/library
-```
-
-### 4️⃣ Run the Server
+### 3️⃣ Run the Server
 
 ```bash
 # Development
@@ -60,12 +51,11 @@ npm run dev
 
 # Production
 npm run build
-npm start
 ```
 
 ---
 
-## 📬 API Endpoints
+## 🌐 API Endpoints
 
 ### 📘 Books
 
@@ -80,7 +70,7 @@ npm start
 **Example**:  
 `GET /api/books?filter=SCIENCE&sortBy=createdAt&sort=desc&limit=5`
 
-## 🧪 Sample API Request (POST /api/books)
+## Sample API Request (POST /api/books)
 
 ```json
 {
@@ -105,7 +95,7 @@ npm start
 
 ---
 
-## 🧪 Sample API Request (POST /api/borrow)
+## Sample API Request (POST /api/borrow)
 
 ```json
 {
